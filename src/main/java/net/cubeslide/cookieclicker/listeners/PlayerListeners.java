@@ -3,6 +3,7 @@ package net.cubeslide.cookieclicker.listeners;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import net.cubeslide.cookieclicker.CookieClicker;
 import net.cubeslide.cookieclicker.utils.Database;
@@ -10,6 +11,7 @@ import net.cubeslide.cookieclicker.utils.ItemBuilder;
 import net.cubeslide.cookieclicker.utils.NameFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -114,7 +116,22 @@ public class PlayerListeners implements Listener {
 
     if(currentItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a§lClick to farm Cookies")) {
       database.addCookie(uuid);
-      event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
+      player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
+
+      int random = new Random().nextInt(20);
+
+      if(random == 15) {
+        event.getView().setItem(13, ItemBuilder.buildItem(Material.BARRIER, 1, "§4§lERROR 404", Arrays.asList("", "§cCookie Clicker not found")));
+        new BukkitRunnable() {
+          @Override
+          public void run() {
+            event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
+          }
+        }.runTaskLaterAsynchronously(CookieClicker.getInstance(), 20 * 3);
+      } else {
+        event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
+      }
+
       event.setCancelled(true);
       player.updateInventory();
     }
