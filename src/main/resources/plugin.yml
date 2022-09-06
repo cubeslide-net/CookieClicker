@@ -4,3 +4,4 @@ main: net.cubeslide.cookieclicker.CookieClicker
 api-version: 1.19
 authors: [ Timeox2k ]
 website: CubeSlide.net
+depend: [ViaVersion]

@@ -1,5 +1,7 @@
 package net.cubeslide.cookieclicker.listeners;
 
+import com.viaversion.viaversion.api.Via;
+import com.viaversion.viaversion.api.ViaAPI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -107,6 +109,7 @@ public class PlayerListeners implements Listener {
 
     if(event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
 
+
     if(event.getCurrentItem().getItemMeta() == null) return;
 
     final Player player = (Player) event.getWhoClicked();
@@ -115,6 +118,7 @@ public class PlayerListeners implements Listener {
     final UUID uuid = player.getUniqueId();
 
     if(currentItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a§lClick to farm Cookies")) {
+      event.setCancelled(true);
       database.addCookie(uuid);
       player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
 
@@ -131,9 +135,16 @@ public class PlayerListeners implements Listener {
       } else {
         event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
       }
+      if(Via.getAPI().getPlayerVersion(player.getUniqueId()) < 108 && event.isLeftClick()) {
+        new BukkitRunnable() {
+          @Override
+          public void run() {
+            player.updateInventory();
+          }
+        }.runTaskLater(CookieClicker.getInstance(), 2);
+      }
 
-      event.setCancelled(true);
-      player.updateInventory();
+
     }
   }
 
