@@ -116,7 +116,7 @@ public class PlayerListeners implements Listener {
     final ItemStack currentItem = event.getCurrentItem();
     final Database database = CookieClicker.getInstance().getDatabase();
     final UUID uuid = player.getUniqueId();
-
+    final     String name = CookieClicker.getInstance().getConfig().getString("CookieItem.name").replace("&", "§");
     if(currentItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a§lClick to farm Cookies")) {
       event.setCancelled(true);
       database.addCookie(uuid);
@@ -135,6 +135,9 @@ public class PlayerListeners implements Listener {
       } else {
         event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
       }
+    }
+
+    if(event.getView().getTitle().equalsIgnoreCase(name)) {
       if(Via.getAPI().getPlayerVersion(player.getUniqueId()) < 108 && event.isLeftClick()) {
         new BukkitRunnable() {
           @Override
@@ -143,9 +146,8 @@ public class PlayerListeners implements Listener {
           }
         }.runTaskLater(CookieClicker.getInstance(), 2);
       }
-
-
     }
+
   }
 
 }
