@@ -79,6 +79,7 @@ public class PlayerListeners implements Listener {
 
       inventory.setItem(11, ItemBuilder.buildItem(Material.GOLD_NUGGET, 1, "§cStats loading..", Arrays.asList("")));
       inventory.setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
+      inventory.setItem(15, ItemBuilder.buildItem(Material.CRIMSON_SIGN, 1, "§3§lYour Profile", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid), "§3Rank §8» §b" + database.getRank(uuid))));
 
       player.openInventory(inventory);
 
@@ -109,7 +110,6 @@ public class PlayerListeners implements Listener {
 
     if(event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
 
-
     if(event.getCurrentItem().getItemMeta() == null) return;
 
     final Player player = (Player) event.getWhoClicked();
@@ -119,6 +119,11 @@ public class PlayerListeners implements Listener {
     final     String name = CookieClicker.getInstance().getConfig().getString("CookieItem.name").replace("&", "§");
     if(currentItem.getItemMeta().getDisplayName().equalsIgnoreCase("§a§lClick to farm Cookies")) {
       event.setCancelled(true);
+
+      if(event.isShiftClick() || event.getClick().isKeyboardClick()) {
+        return;
+      }
+
       database.addCookie(uuid);
       player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
 
@@ -130,9 +135,11 @@ public class PlayerListeners implements Listener {
           @Override
           public void run() {
             event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
+
           }
         }.runTaskLaterAsynchronously(CookieClicker.getInstance(), 20 * 3);
       } else {
+        event.getView().setItem(15, ItemBuilder.buildItem(Material.CRIMSON_SIGN, 1, "§3§lYour Profile", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid), "§3Rank §8» §b" + database.getRank(uuid))));
         event.getView().setItem(13, ItemBuilder.buildItem(Material.COOKIE, 1, "§a§lClick to farm Cookies", Arrays.asList("", "§eCookies farmed §8» §6" + database.getCookies(uuid))));
       }
     }
